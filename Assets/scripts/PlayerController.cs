@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour
     string nowAnime = "";
     string oldAnime = "";
 
+    public int score = 0;  //スコア
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() //1番最初に発動するものがスタートメソッド。基本的に1回のみの処理
     {
@@ -123,6 +125,20 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.tag == "Dead")
         {
             GameOver();     //ゲームオーバー！
+        }
+
+        else if (collision.gameObject.tag == "ScoreItem")
+        {
+            // スコアアイテム
+            ScoreItem item = collision.gameObject.GetComponent<ScoreItem>();  // ScoreItemを得る			
+            score = item.itemdata.value;                // スコアを得る
+            UIController ui = Object.FindFirstObjectByType<UIController>();      // UIControllerを探す
+            if (ui != null)
+            {
+                ui.UpdateScore(score);                  // スコア表示を更新する
+            }
+            score = 0; //次に備えてスコアをリセット
+            Destroy(collision.gameObject);              // アイテム削除する
         }
     }
 

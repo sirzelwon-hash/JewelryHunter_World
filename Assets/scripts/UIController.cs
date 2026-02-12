@@ -25,6 +25,10 @@ public class UIController : MonoBehaviour
     GameObject player;
     PlayerController playerController;
 
+    //スコア追加
+    public GameObject scoreText;  //スコアテキスト
+    public int stageScore = 0; 　//ステージスコア
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -46,6 +50,9 @@ public class UIController : MonoBehaviour
         //プレイヤー情報とPlayerControllerコンポーネントの取得
         player = GameObject.FindGameObjectWithTag("Player");
         playerController = player.GetComponent<PlayerController>();
+
+        //スコア追加
+        UpdateScore();
     }
 
     // 画像を非表示にする　自作メソッド　invokeで指名できるようにするためわざわざメソッド化する
@@ -68,12 +75,18 @@ public class UIController : MonoBehaviour
             mainImage.GetComponent<Image>().sprite = gameClearSpr;  // 画像を設定する
 
             //時間カウントを停止
-            if(timeController != null)
+            if (timeController != null)
             {
                 timeController.IsTimeOver();  //停止フラグ
 
-
+                //整数に型変形することで少数を切り捨てる
+                int time = (int)timeController.GetDisplayTime();
+                GameManager.totalScore += time * 10;  //残り時間をスコアに加える
             }
+
+            GameManager.totalScore += stageScore; //トータルスコアの最終確定
+            stageScore = 0;  //ステージスコアリセット
+            UpdateScore(); 　//スコア表示の更新
         }
 
         else if (GameManager.gameState == GameState.GameOver)
@@ -96,13 +109,13 @@ public class UIController : MonoBehaviour
 
         else if (GameManager.gameState == GameState.InGame)
         {
-            if(player == null)  //プレイヤー消滅後は何もしない
+            if (player == null)  //プレイヤー消滅後は何もしない
             {
                 return;
             }
 
             //タイムを更新する
-            if(timeController != null && useTime)
+            if (timeController != null && useTime)
             {
                 // float型のUI用表示変数を取得し、整数に型変換することで小数を切り捨てる
                 int time = (int)timeController.GetDisplayTime();  //int型に型変換し、小数点切り捨て
@@ -119,5 +132,20 @@ public class UIController : MonoBehaviour
                 }
             }
         }
+    }
+
+    // 現在スコアのUI表示更新
+    void UpdateScore()
+    {
+        int currentScore = stageScore + GameManager.totalScore;
+        scoreText.GetComponent<TextMeshProUGUI>().text = currentScore.ToString();
+    }
+
+    // プレイヤーから呼び出される 獲得スコアを追加した上でのUI表示更新
+    public void UpdateScore(int score)
+    {
+        stageScore += score;
+        int currentScore = stageScore + GameManager.totalScore;
+        scoreText.GetComponent<TextMeshProUGUI>().text = currentScore.ToString();
     }
 }
