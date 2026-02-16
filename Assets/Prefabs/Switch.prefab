@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -2621107458859240990, guid: fab00ea4af14c8049994df64c37df394, type: 3}
+  m_Sprite: {fileID: -2621107458859240990, guid: 884646b986ea62e40b2982da4798e2a6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -152,6 +152,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetMoveBlock: {fileID: 0}
-  imageOff: {fileID: -2621107458859240990, guid: fab00ea4af14c8049994df64c37df394, type: 3}
-  imageOn: {fileID: 4000373562756134585, guid: 54909661385a6b84fadb8a5912f3785a, type: 3}
+  imageOff: {fileID: -2621107458859240990, guid: 884646b986ea62e40b2982da4798e2a6, type: 3}
+  imageOn: {fileID: 4000373562756134585, guid: 1e3e35857fb10204f94561113a6bdf4e, type: 3}
   on: 0
