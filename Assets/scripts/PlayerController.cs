@@ -1,4 +1,6 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -25,6 +27,27 @@ public class PlayerController : MonoBehaviour
 
     public int score = 0;  //スコア
 
+    InputAction moveAction; //Moveアクション
+    InputAction jumpAction;　//jumpアクション
+    PlayerInput input;  //PlayerInputコンポーネント
+
+    GameManager gm; //GameManagerスクリプト
+
+    void OnMove(InputValue value)
+    {
+        //取得した情報をVectoe2形式で抽出
+        Vector2 moveInput = value.Get<Vector2>();
+        axisH = moveInput.x;  //そ９のx成分をaxisHに代入
+    }
+
+    void OnJump(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            goJump = true;
+        }
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() //1番最初に発動するものがスタートメソッド。基本的に1回のみの処理
     {
@@ -33,6 +56,15 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();        // Animator を取ってくる
         nowAnime = stopAnime;                       // 停止から開始する
         oldAnime = stopAnime;                       // 停止から開始する
+
+        input = GetComponent<PlayerInput>();  //PlayerInputコンポーネントの取得
+        moveAction = input.currentActionMap.FindAction("Move");　//Moveアクションの取得
+        jumpAction = input.currentActionMap.FindAction("Jump"); //Jumpアクション取得
+        InputActionMap uiMap = input.actions.FindActionMap("ui");  //UIマップの取得
+        uiMap.Disable();  //UIマップは無効化
+
+        //GameObject型のアタッチされている特定のコンポーネントを探してくるメソッド
+        gm = GameObject.FindFirstObjectByType<GameManager>();
     }
 
     // Update is called once per frame
@@ -50,13 +82,22 @@ public class PlayerController : MonoBehaviour
                                         Vector2.down,　　　　//発射方向 downには(0,-1,0）情報が入っている
                                         0.0f,　　　　　　　　//発射距離
                                         groundLayer);　　　　//検出するレイヤー groundLayerとぶつかったら…
-        if (Input.GetButtonDown("Jump"))         //キャラクターをジャンプさせるキーが押されたか
+        //if (Input.GetButtonDown("Jump"))         //キャラクターをジャンプさせるキーが押されたか
+        //{
+        //    goJump = true;     //ジャンプフラグを立てる
+        //}
+
+        //InputActionのPlayerマップの"Jump"アクションに登録されたボタンが押されたか
+        if (jumpAction.WasPressedThisFrame())
         {
-            goJump = true;     //ジャンプフラグを立てる
+            goJump = true;
         }
 
-        //水平方向のチェックをする
-        axisH = Input.GetAxisRaw("Horizontal");
+        ////水平方向のチェックをする　左右に関連するキーの値をaxisHに代入
+        //axisH = Input.GetAxisRaw("Horizontal");
+
+        //InputActionのPlayerマップの"Move"アクションに登録されたボタンをVector2形式で読み取り、そのうちx成分をaxisHに代入
+        //axisH = moveAction.ReadValue<Vector2>().x;
 
         if (axisH > 0.0f) //向きの調節
         {
@@ -166,6 +207,21 @@ public class PlayerController : MonoBehaviour
     void GameStop()
     {
         rbody.linearVelocity = new Vector2(0, 0);    //速度を0にして強制停止
+
+        input.currentActionMap.Disable();
+        input.SwitchCurrentActionMap("UI");　//アクションマップをUIマップに
+        input.currentActionMap.Enable(); //UIマップを有効化
+    }
+
+    //UI表示にSubmitボタンが押されたら
+    void OnSubmit(InputValue value)
+    {
+        //もしゲーム中でなければ
+        if(GameManager.gameState != GameState.InGame)
+        {
+            //ゲームマネージャースクリプトのGameEndメソッドの発動
+            gm.GameEnd();
+        }
     }
 
     //プレイヤーのaxisH()の値を取得
