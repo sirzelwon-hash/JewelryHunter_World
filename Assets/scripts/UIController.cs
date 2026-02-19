@@ -27,8 +27,17 @@ public class UIController : MonoBehaviour
 
     //スコア追加
     public GameObject scoreText;  //スコアテキスト
-    public int stageScore = 0; 　//ステージスコア
+    public int stageScore = 0;  //ステージスコア
 
+    //矢と鍵の表示更新
+    public TextMeshProUGUI keyText;
+    int currentKeys;
+    public TextMeshProUGUI arrowText;
+    int currentArrows;
+
+    //体力の表示更新
+    public Slider lifeSlider;
+    int currentLife;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -131,6 +140,27 @@ public class UIController : MonoBehaviour
                     playerController.GameOver(); // ゲームオーバーにする 
                 }
             }
+        }
+
+        //把握していた鍵の数とGameManagerの鍵の数に違いが出たら、正しい数にUIを更新
+        if (currentKeys != GameManager.keys)
+        {
+            currentKeys = GameManager.keys;
+            keyText.text = currentKeys.ToString();
+        }
+        //把握していた矢の数とGameManagerの矢の数に違いが出たら、正しい数となるようにUIを更新
+        if (currentArrows != GameManager.arrows)
+        {
+            currentArrows = GameManager.arrows;
+            arrowText.text = currentArrows.ToString();
+        }
+
+        //把握していた体力と？？？の体力に違いが出たら、正しい値になるようにUIを更新
+        if(currentLife != PlayerController.playerLife)
+        {
+            currentLife = PlayerController.playerLife;
+            lifeSlider.value = currentLife;
+            
         }
     }
 

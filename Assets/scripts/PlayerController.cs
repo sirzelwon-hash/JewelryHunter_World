@@ -33,11 +33,26 @@ public class PlayerController : MonoBehaviour
 
     GameManager gm; //GameManagerスクリプト
 
+    public static int playerLife = 10; //プレイヤーの体力
+
+    bool inDamage;  //ダメージ管理フラグ
+
+    //プレイヤーライフの回復メソッド
+    static public void PlayerRecovery(int life)
+    {
+        playerLife += life; //引数life分だけ回復
+
+        if (playerLife > 10)
+        {
+            playerLife = 10;
+        }
+    }
+
     void OnMove(InputValue value)
     {
         //取得した情報をVectoe2形式で抽出
         Vector2 moveInput = value.Get<Vector2>();
-        axisH = moveInput.x;  //そ９のx成分をaxisHに代入
+        axisH = moveInput.x;  //そのx成分をaxisHに代入
     }
 
     void OnJump(InputValue value)
@@ -65,27 +80,47 @@ public class PlayerController : MonoBehaviour
 
         //GameObject型のアタッチされている特定のコンポーネントを探してくるメソッド
         gm = GameObject.FindFirstObjectByType<GameManager>();
+
+        playerLife = 10; //体力を全快にする
     }
 
     // Update is called once per frame
     void Update()　//スタートが終わった後に永久ループするのがアップデートメソッド。入力を監視
     {
 
-        if (GameManager.gameState != GameState.InGame)　　//ゲームマネージャーが持っているゲームステータスがIngameでなければなにもやらない
+        if (GameManager.gameState != GameState.InGame || inDamage)　　//ゲームマネージャーが持っているゲームステータスがIngameでなければなにもやらない
         {
+            //もしダメージ管理フラグが立っていたら点滅処理
+            if (inDamage)
+            {
+                //Sin関数の角度に経過時間（一定リズムの値）を与えると、等間隔で+と－の結果が得られる
+                float val = Mathf.Sin(Time.time * 50);
+
+                //等間隔で変わっているであろうvalの値をチェックして＋の時間帯は表示、－の時間帯は非表示
+                if (val > 0)
+                {
+                    GetComponent<SpriteRenderer>().enabled = true;
+                }
+                else
+                {
+                    GetComponent<SpriteRenderer>().enabled = false;
+                }
+            }
+
             return;    //Updateを中断
+
         }
 
         //地上判定　Physics2Dの中にCircleCastというメソッドがあるのでそれを使う
         onGround = Physics2D.CircleCast(transform.position,  //発射位置　プレイヤーのピポット
-                                        0.2f,　　　　　　　　//円の半径
-                                        Vector2.down,　　　　//発射方向 downには(0,-1,0）情報が入っている
-                                        0.0f,　　　　　　　　//発射距離
-                                        groundLayer);　　　　//検出するレイヤー groundLayerとぶつかったら…
-        //if (Input.GetButtonDown("Jump"))         //キャラクターをジャンプさせるキーが押されたか
-        //{
-        //    goJump = true;     //ジャンプフラグを立てる
-        //}
+                                        0.2f,        //円の半径
+                                        Vector2.down,    //発射方向 downには(0,-1,0）情報が入っている
+                                        0.0f,        //発射距離
+                                        groundLayer);    //検出するレイヤー groundLayerとぶつかったら…
+                                                         //if (Input.GetButtonDown("Jump"))         //キャラクターをジャンプさせるキーが押されたか
+                                                         //{
+                                                         //    goJump = true;     //ジャンプフラグを立てる
+                                                         //}
 
         //InputActionのPlayerマップの"Jump"アクションに登録されたボタンが押されたか
         if (jumpAction.WasPressedThisFrame())
@@ -102,12 +137,12 @@ public class PlayerController : MonoBehaviour
         if (axisH > 0.0f) //向きの調節
         {
             //Debug.Log("右押されてる");
-            transform.localScale = new Vector2(1, 1);　//右移動
+            transform.localScale = new Vector2(1, 1); //右移動
         }
         else if (axisH < 0.0f)
         {
             //Debug.Log("左押されてる");
-            transform.localScale = new Vector2(-1, 1);　//左右反転させる
+            transform.localScale = new Vector2(-1, 1); //左右反転させる
         }
 
         // アニメーション更新
@@ -134,10 +169,12 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void FixedUpdate()　//こちらもずっとループしている。入力に応じて動きを変える
+
+    private void FixedUpdate() //こちらもずっとループしている。入力に応じて動きを変える
     {
 
-        if (GameManager.gameState != GameState.InGame)　　//ゲームマネージャーが持っているゲームステータスがIngameでなければなにもやらない
+        //ゲームのステータスがIngGameじゃないとき、またはダメージ管理フラグがtrueのとき
+        if (GameManager.gameState != GameState.InGame || inDamage)  //ゲームマネージャーが持っているゲームステータスがIngameでなければなにもやらない
         {
             return;    //Updateを中断
         }
@@ -147,7 +184,7 @@ public class PlayerController : MonoBehaviour
             //速度を更新する
             rbody.linearVelocity = new Vector2(axisH * speed, rbody.linearVelocity.y);
         }
-        if (onGround && goJump)　　//地面の上でジャンプキーが押された場合
+        if (onGround && goJump)  //地面の上でジャンプキーが押された場合
         {
             //ジャンプさせる
             Vector2 jumpPw = new Vector2(0, jump);  //ジャンプさせるベクトルを作るjumpPwという変数。直下の行のために作成
@@ -161,7 +198,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Goal")
         {
-            Goal();　　　//ゴール！
+            Goal();   //ゴール！
         }
         else if (collision.gameObject.tag == "Dead")
         {
@@ -181,6 +218,15 @@ public class PlayerController : MonoBehaviour
             score = 0; //次に備えてスコアをリセット
             Destroy(collision.gameObject);              // アイテム削除する
         }
+
+        else if (collision.gameObject.tag == "Enemy") //エネミータグとぶつかったら
+        {
+            if (!inDamage) //ダメージ中でなければ
+            {
+                //ぶつかった相手のオブジェクト情報を引数
+                GetDamage(collision.gameObject);
+            }
+        }
     }
 
     //ゴール
@@ -199,7 +245,7 @@ public class PlayerController : MonoBehaviour
 
         //ゲームオーバー演出
         GetComponent<CapsuleCollider2D>().enabled = false;   //当たり判定を消す
-        rbody.AddForce(new Vector2(0, 5), ForceMode2D.Impulse);　　//上に少し跳ね上げる
+        rbody.AddForce(new Vector2(0, 5), ForceMode2D.Impulse);  //上に少し跳ね上げる
         Destroy(gameObject, 2.0f);   //2秒後にヒエラルキーからオブジェクトを抹殺　(this.gameObject,何秒後に)
     }
 
@@ -209,7 +255,7 @@ public class PlayerController : MonoBehaviour
         rbody.linearVelocity = new Vector2(0, 0);    //速度を0にして強制停止
 
         input.currentActionMap.Disable();
-        input.SwitchCurrentActionMap("UI");　//アクションマップをUIマップに
+        input.SwitchCurrentActionMap("UI"); //アクションマップをUIマップに
         input.currentActionMap.Enable(); //UIマップを有効化
     }
 
@@ -217,7 +263,7 @@ public class PlayerController : MonoBehaviour
     void OnSubmit(InputValue value)
     {
         //もしゲーム中でなければ
-        if(GameManager.gameState != GameState.InGame)
+        if (GameManager.gameState != GameState.InGame)
         {
             //ゲームマネージャースクリプトのGameEndメソッドの発動
             gm.GameEnd();
@@ -228,5 +274,38 @@ public class PlayerController : MonoBehaviour
     public float GetAxisH()
     {
         return axisH;
+    }
+
+    //ダメージメソッド
+    void GetDamage(GameObject target)
+    {
+        //プレイ中のみ発動
+        if (GameManager.gameState == GameState.InGame)
+        {
+            playerLife -= 1; //体力を減少
+            if (playerLife > 0) //まだゲームオーバーじゃなければ
+            {
+                //ぶつかった相手と反対方向にノックバック
+                rbody.linearVelocity = new Vector2(0, 0);
+                Vector3 v = (transform.position - target.transform.position).normalized;
+                rbody.AddForce(new Vector2(v.x * 4, v.y * 4), ForceMode2D.Impulse);
+                //ダメージ管理フラグを立てる
+                inDamage = true;
+                //時間差でダメージ管理フラグを降ろす
+                Invoke("DamageEnd", 0.25f);
+            }
+            else //playerLifeが0以下になってしまったら
+            {
+                GameOver();
+            }
+        }
+    }
+
+    //ダメージ管理フラグをOFFにするメソッド
+    void DamageEnd()
+    {
+        inDamage = false;
+        //ダメージ終了と同時に確実に姿を表示させる（点滅終了）
+        GetComponent<SpriteRenderer>().enabled = true;
     }
 }

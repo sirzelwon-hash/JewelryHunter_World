@@ -31,9 +31,9 @@ public class GameManager : MonoBehaviour
     public static int currentDoorNumber = 0;
 
     //所持アイテム　鍵の管理
-    public static int Key = 1;
+    public static int keys = 1;
     //どのステージの鍵が入手済かを管理
-    public static Dictionary<string, bool> KeyGot;  //シーン名,true/false
+    public static Dictionary<string, bool> keyGot;  //シーン名,true/false
 
     //所持アイテム　矢の管理
     public static int arrows = 10;
@@ -46,16 +46,16 @@ public class GameManager : MonoBehaviour
         soundPlayer = GetComponent<AudioSource>();  //AudioSorceを参照する
 
         //KeyGotが何もない状態だったときのみ初期化
-        if(KeyGot == null)
+        if(keyGot == null)
         {
-            KeyGot =new Dictionary<string, bool>();
+            keyGot =new Dictionary<string, bool>();
         }
 
         //もしも現シーン名がDictonary(KeyGot)に登録されていなければ
-        if (!(KeyGot.ContainsKey(SceneManager.GetActiveScene().name)))
+        if (!(keyGot.ContainsKey(SceneManager.GetActiveScene().name)))
         {
-            //Dictonary(GeyGot)に登録しておく
-            KeyGot.Add(SceneManager.GetActiveScene().name, false);
+            //Dictonary(KeyGot)に登録しておく
+            keyGot.Add(SceneManager.GetActiveScene().name, false);
         }
     }
 
