@@ -1,0 +1,27 @@
+using UnityEngine;
+
+public class Arrow_controller : MonoBehaviour
+{
+
+    public float deleteTime = 2; //削除時間
+    public int attackPower = 1;  //攻撃力
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        Destroy(gameObject, deleteTime);  //一定時間で消す
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        transform.SetParent(collision.transform);  //接触したゲームオブジェクトの子にする
+        GetComponent<CircleCollider2D>().enabled = false;  //当たり判定を無効化する
+        GetComponent<Rigidbody2D>().simulated = false;  //物理シミュレーションを無効化する
+    }
+}

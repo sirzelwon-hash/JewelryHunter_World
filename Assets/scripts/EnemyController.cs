@@ -9,6 +9,11 @@ public class EnemyController : MonoBehaviour
     bool onGround = false;              // 地面フラグ
     float time = 0;
 
+    public float enemyLife = 3; //敵の体力
+    bool inDamage;  //ダメージ管理フラグ
+
+    Rigidbody2D rbody; //死亡演出のため
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -16,6 +21,8 @@ public class EnemyController : MonoBehaviour
         {
             transform.localScale = new Vector2(-1, 1);// 向きの変更
         }
+
+        rbody = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -43,6 +50,19 @@ public class EnemyController : MonoBehaviour
                     transform.localScale = new Vector2(1, 1);   // 向きの変更
                 }
             }
+        }
+
+        //ダメージ管理フラグが立っていたら点滅処理
+        if (inDamage)
+        {
+            //三角関数Sinに角度（時間経過）を与えて正/負の値を算出
+            float val = Mathf.Sin(Time.time * 50);
+            if (val > 0) //正なら表示
+            {
+                GetComponent<SpriteRenderer>().enabled = true;
+            }
+            else //負なら非表示
+            { GetComponent<SpriteRenderer>().enabled = false; }
         }
     }
 
@@ -77,5 +97,39 @@ public class EnemyController : MonoBehaviour
         {
             transform.localScale = new Vector2(1, 1); // 向きの変更
         }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!inDamage)
+        {
+
+            //ぶつかった相手がArrowだったら
+            if (collision.gameObject.tag == "Arrow")
+            {
+                //ぶつかった矢のスクリプトを取得
+                Arrow_controller arrowCnt = collision.gameObject.GetComponent<Arrow_controller>();
+                //相手の変数attackpower分だけ体力を減らす
+                enemyLife -= arrowCnt.attackPower;
+
+                //ダメージ管理フラグを立てる
+                inDamage = true;
+                Invoke("DamageEnd", 0.25f);
+
+                if (enemyLife <= 0) //死亡
+                {
+                    rbody.linearVelocity = Vector2.zero; //動きを止める
+                    GetComponent<CircleCollider2D>().enabled = false;
+                    rbody.AddForce(new Vector2(0, 3), ForceMode2D.Impulse);
+                    Destroy(gameObject, 0.3f);
+                }
+            }
+        }
+    }
+
+    void DamageEnd()
+    {
+        inDamage = false; //フラグを戻す
+        GetComponent<SpriteRenderer>().enabled = true;
     }
 }
