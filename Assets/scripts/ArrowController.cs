@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Arrow_controller : MonoBehaviour
+public class ArrowController : MonoBehaviour
 {
 
     public float deleteTime = 2; //削除時間

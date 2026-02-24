@@ -399,7 +399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6695743b8452de5488df972728014e6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  nextSceneName: Result
+  nextSceneName: WorldMap
   meGameClear: {fileID: 8300000, guid: 252a5acc334794342bf77b238d4d84e2, type: 3}
   meGameOver: {fileID: 8300000, guid: feb43b06d39959549ae0d965024d161a, type: 3}
   isGameClear: 0

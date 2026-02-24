@@ -108,7 +108,7 @@ public class EnemyController : MonoBehaviour
             if (collision.gameObject.tag == "Arrow")
             {
                 //ぶつかった矢のスクリプトを取得
-                Arrow_controller arrowCnt = collision.gameObject.GetComponent<Arrow_controller>();
+                 ArrowController arrowCnt = collision.gameObject.GetComponent<ArrowController>();
                 //相手の変数attackpower分だけ体力を減らす
                 enemyLife -= arrowCnt.attackPower;
 
