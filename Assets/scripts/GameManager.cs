@@ -67,7 +67,8 @@ public class GameManager : MonoBehaviour
             soundPlayer.Stop(); //ステージ曲を止める
             soundPlayer.PlayOneShot(meGameClear); //ゲームクリアの曲を1回だけ鳴らす
             isGameClear = true; //クリアフラグ
-            gameState = GameState.GameEnd; //ゲームの状態を更新
+            Invoke("GameStatusChange", 0.02f);
+            //gameState = GameState.GameEnd; //ゲームの状態を更新
         }
 
         else if (gameState == GameState.GameOver)
@@ -75,7 +76,8 @@ public class GameManager : MonoBehaviour
             soundPlayer.Stop(); //ステージ曲を止める
             soundPlayer.PlayOneShot(meGameOver); //ゲームオーバーの曲を1回だけ鳴らす
             isGameOver = true;  //ゲームオーバーフラグ
-            gameState = GameState.GameEnd; //ゲームの状態を更新
+            Invoke("GameStatusChange", 0.02f);
+            //gameState = GameState.GameEnd; //ゲームの状態を更新
         }
     }
 

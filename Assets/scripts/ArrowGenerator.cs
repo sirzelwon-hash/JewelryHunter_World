@@ -6,6 +6,7 @@ public class ArrowGenerator : MonoBehaviour
     GameObject player;
     public Sprite itemBoxClose;　//指定したオブジェクトの絵を閉じた絵にする
     public Sprite itemBoxOpen;　//指定したオブジェクトの絵を開けた絵にする
+    public static bool isRecover; //アイテム補充完了フラグ
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -37,6 +38,7 @@ public class ArrowGenerator : MonoBehaviour
             int index = Random.Range(0, objects.Length);　//0番以上object配列の数未満、のランダム
             objects[index].GetComponent<Advent_ItemBox>().isClosed = true;  //Close(アイテム未取得)の復活
             objects[index].GetComponent<SpriteRenderer>().sprite = itemBoxClose;　//絵を閉じた絵に変更
+            isRecover = true; //補充済フラグ
         }
     }
 }

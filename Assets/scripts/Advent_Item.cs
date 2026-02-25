@@ -47,6 +47,7 @@ public class Advent_Item : MonoBehaviour
 
                 case AdventItemType.Arrow:
                     GameManager.arrows += numberOfArrow;
+                    ArrowGenerator.isRecover = false; //一度矢を手に入れたのでまた補充できるように補充済フラグを降ろす
                     break;
 
                 case AdventItemType.Life:
