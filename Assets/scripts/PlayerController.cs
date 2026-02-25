@@ -79,6 +79,8 @@ public class PlayerController : MonoBehaviour
 
     void ShootArrow()
     {
+        SoundManager.currentSoundManager.PlaySE(SEType.Shoot); //矢の音を鳴らす
+
         GameManager.arrows--;  //矢を減らす
         Quaternion r;  //回転の3軸の値
 
@@ -245,6 +247,7 @@ public class PlayerController : MonoBehaviour
 
         else if (collision.gameObject.tag == "ScoreItem")
         {
+            SoundManager.currentSoundManager.PlaySE(SEType.ItemGet); //アイテムゲットの音を鳴らす
             // スコアアイテム
             ScoreItem item = collision.gameObject.GetComponent<ScoreItem>();  // ScoreItemを得る			
             score = item.itemdata.value;                // スコアを得る
@@ -317,6 +320,8 @@ public class PlayerController : MonoBehaviour
     //ダメージメソッド
     void GetDamage(GameObject target)
     {
+
+        SoundManager.currentSoundManager.PlaySE(SEType.GetDamage); //ダメージの音を鳴らす
         //プレイ中のみ発動
         if (GameManager.gameState == GameState.InGame)
         {

@@ -40,6 +40,9 @@ public class TitleManager : MonoBehaviour
         {
             continueButton.GetComponent<Button>().interactable = false;  //ボタン機能を無効
         }
+
+        SoundManager.currentSoundManager.StopBGM(); //BGMをストップ
+        SoundManager.currentSoundManager.PlayBGM(BGMType.Title); //タイトルのBGMを再生
     }
 
     // Update is called once per frame

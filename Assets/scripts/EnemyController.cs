@@ -108,7 +108,7 @@ public class EnemyController : MonoBehaviour
             if (collision.gameObject.tag == "Arrow")
             {
                 //ぶつかった矢のスクリプトを取得
-                 ArrowController arrowCnt = collision.gameObject.GetComponent<ArrowController>();
+                ArrowController arrowCnt = collision.gameObject.GetComponent<ArrowController>();
                 //相手の変数attackpower分だけ体力を減らす
                 enemyLife -= arrowCnt.attackPower;
 
@@ -118,6 +118,8 @@ public class EnemyController : MonoBehaviour
 
                 if (enemyLife <= 0) //死亡
                 {
+                    SoundManager.currentSoundManager.PlaySE(SEType.Enemykilled); //敵死亡の音を鳴らす
+
                     rbody.linearVelocity = Vector2.zero; //動きを止める
                     GetComponent<CircleCollider2D>().enabled = false;
                     rbody.AddForce(new Vector2(0, 3), ForceMode2D.Impulse);
