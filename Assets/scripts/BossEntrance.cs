@@ -62,7 +62,7 @@ public class BossEntrance : MonoBehaviour
         //触れた相手がPlayerかつ扉が開いていれば
         if (collision.gameObject.tag == "Player" && isOpened)
         {
-            SceneManager.LoadScene(sceneName); //ボス部屋に良く
+            SceneManager.LoadScene(sceneName); //ボス部屋に行く
         }
     }
 

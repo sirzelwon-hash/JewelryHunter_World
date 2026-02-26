@@ -20,6 +20,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/WorldMap.unity
     guid: 8e88e3d0668c97d41b2de9944aecbb99
+  - enabled: 1
+    path: Assets/Scenes/Stage1.unity
+    guid: a0e725da0e3d4f141a3086f78e51c579
+  - enabled: 1
+    path: Assets/Scenes/Stage2.unity
+    guid: 5a76ac4e64d5c694e956e94d015fe78c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
