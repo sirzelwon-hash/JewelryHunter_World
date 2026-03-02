@@ -51,6 +51,7 @@ public class ResultManager : MonoBehaviour
     // シーンを読み込む
     public void Load()
     {
+        SoundManager.currentSoundManager = null;
         SceneManager.LoadScene(sceneName);
     }
 }
