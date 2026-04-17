@@ -120,6 +120,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void GameStatusChange()
+    {
+        gameState = GameState.GameEnd; //ゲームの状態を更新
+    }
+
     //リスタート
     public void Restart()
     {
