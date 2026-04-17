@@ -96,6 +96,11 @@ sysinfo.txt
 
 .vs/
 
+!Build/
+!Build/*.js
+!Build/*.data
+!Build/*.wasm
+
 #マテリアルファイルは除外しないほうが面倒が少ない
 #*.mat
 
